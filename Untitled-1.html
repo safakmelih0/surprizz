@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biricik Sevgilime</title>
+    <!-- Vintage mektup için el yazısı/daktilo fontları -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Genel Ayarlar */
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            background-color: #111;
+        }
+
+        /* Arka Plan Slayt Gösterisi (Fading) */
+        .bg-slideshow {
+            position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; z-index: -2;
+        }
+        .bg-slideshow span {
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+            background-size: cover; background-position: center;
+            opacity: 0; animation: imageAnimation 18s linear infinite;
+        }
+        /* Arka plan fotoğraflarını buraya ekle */
+        .bg-slideshow span:nth-child(1) { background-image: url('arkaplan1.jpg'); animation-delay: 0s; }
+        .bg-slideshow span:nth-child(2) { background-image: url('arkaplan2.jpg'); animation-delay: 6s; }
+        .bg-slideshow span:nth-child(3) { background-image: url('arkaplan3.jpg'); animation-delay: 12s; }
+        
+        /* Fotoğrafların üzerine karanlık romantik bir filtre */
+        .bg-overlay {
+            position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; z-index: -1;
+            background: rgba(0, 0, 0, 0.65); /* Yazıların okunması için karartma */
+        }
+
+        @keyframes imageAnimation {
+            0% { opacity: 0; animation-timing-function: ease-in; }
+            12% { opacity: 1; animation-timing-function: ease-out; }
+            33% { opacity: 1; }
+            45% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        /* Giriş Ekranı (Tuşlu Şifre) */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000; transition: opacity 1s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .keypad-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .keypad-container h2 { margin-top: 0; font-weight: 300; letter-spacing: 2px; }
+
+        .password-display {
+            font-size: 30px; letter-spacing: 10px; height: 40px; margin-bottom: 20px;
+            color: #ff9a9e; text-shadow: 0 0 10px rgba(255, 154, 158, 0.5);
+        }
+
+        .keypad {
+            display: grid; grid-template-columns: repeat(3, 70px); gap: 15px;
+            justify-content: center;
+        }
+
+        .keypad button {
+            width: 70px; height: 70px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.3);
+            color: white; font-size: 24px; cursor: pointer; transition: 0.2s;
+            backdrop-filter: blur(5px);
+        }
+
+        .keypad button:hover, .keypad button:active { background: rgba(255, 154, 158, 0.6); transform: scale(0.95); }
+        .keypad .action-btn { font-size: 16px; background: rgba(255, 75, 110, 0.3); }
+
+        .error-msg { color: #ff4b6e; font-size: 14px; margin-top: 15px; display: none; height: 20px; }
+
+        /* Ana İçerik Sayfası */
+        #main-content {
+            display: none; padding: 50px 20px; max-width: 900px; margin: 0 auto;
+            text-align: center; animation: fadeIn 2s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-family: 'Dancing Script', cursive; font-size: 4em; color: #ff9a9e; margin-bottom: 10px; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+
+        /* Sayaç */
+        #counter {
+            font-size: 1.2em; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2);
+            padding: 15px 30px; border-radius: 30px; backdrop-filter: blur(10px);
+            display: inline-block; margin-bottom: 50px; font-weight: 300; letter-spacing: 1px;
+        }
+
+        /* Zaman Çizelgesi (Timeline) */
+        .timeline {
+            text-align: left; border-left: 3px solid #ff9a9e; padding-left: 20px;
+            margin: 0 auto 60px auto; max-width: 600px;
+        }
+        .timeline-item { margin-bottom: 30px; position: relative; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -28px; top: 5px; width: 14px; height: 14px;
+            background: #ff9a9e; border-radius: 50%; box-shadow: 0 0 10px #ff9a9e;
+        }
+        .timeline-date { font-size: 0.9em; color: #ff9a9e; font-weight: bold; }
+        .timeline-text { font-size: 1.1em; background: rgba(0,0,0,0.4); padding: 10px 15px; border-radius: 8px; margin-top: 5px; }
+
+        /* Vintage Polaroid Galerisi */
+        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-bottom: 60px; }
+        
+        .polaroid {
+            background: #fdf6e3; padding: 15px 15px 40px 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); border-radius: 2px;
+            transition: transform 0.3s;
+            /* Vintage kağıt dokusu */
+            background-image: url('https://www.transparenttextures.com/patterns/old-wall.png');
+        }
+        .polaroid img {
+            width: 250px; height: 250px; object-fit: cover;
+            /* Vintage Fotoğraf Filtresi */
+            filter: sepia(0.4) contrast(1.1) brightness(0.9) saturate(0.8);
+        }
+        .polaroid-caption {
+            font-family: 'Caveat', cursive; color: #333; font-size: 24px; margin-top: 10px; font-weight: bold;
+        }
+        /* Polaroidleri dağınık çevirme */
+        .polaroid:nth-child(even) { transform: rotate(4deg); }
+        .polaroid:nth-child(odd) { transform: rotate(-3deg); }
+        .polaroid:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
+
+        /* Tam Mektup Sayfası (Vintage) */
+        .letter-container { margin: 0 auto 50px auto; max-width: 700px; }
+        
+        .vintage-letter {
+            background-color: #f4ebd0;
+            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            color: #2c1e16; padding: 50px 40px; border-radius: 3px;
+            box-shadow: inset 0 0 50px rgba(139, 69, 19, 0.1), 0 15px 35px rgba(0,0,0,0.5);
+            text-align: left; line-height: 1.8; font-size: 22px;
+            font-family: 'Caveat', cursive; /* El yazısı fontu */
+            position: relative;
+            transform: rotate(-1deg);
+        }
+
+        .vintage-letter::before {
+            content: "♥"; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            font-size: 30px; color: #d63031; background: #f4ebd0; border-radius: 50%; padding: 0 10px;
+        }
+
+        .stamp {
+            position: absolute; top: 20px; right: 20px; width: 60px; height: 60px;
+            border: 2px solid #a33; border-radius: 50%; color: #a33;
+            display: flex; align-items: center; justify-content: center;
+            font-family: sans-serif; font-size: 10px; font-weight: bold;
+            text-transform: uppercase; transform: rotate(15deg); opacity: 0.6;
+        }
+
+        /* Uçuşan Kalpler Efekti */
+        .heart { position: fixed; top: -10vh; color: rgba(255, 154, 158, 0.6); animation: fall linear forwards; z-index: -1; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- GİZLİ ARKA PLAN MÜZİĞİ (Şifre girilince tetiklenecek) -->
+    <!-- sarki.mp3 dosyasını kodla aynı klasöre koy -->
+    <audio id="bgMusic" loop>
+        <source src="sarki.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- ARKA PLAN FOTOĞRAF SLAYTI -->
+    <div class="bg-slideshow">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="bg-overlay"></div>
+
+    <!-- GİRİŞ EKRANI (Tuşlu) -->
+    <div id="login-screen">
+        <div class="keypad-container">
+            <h2>GİRİŞ KİLİDİ</h2>
+            <p style="font-size: 12px; opacity: 0.8; margin-bottom: 20px;">Kilidi açmak için tarihimizi gir</p>
+            
+            <div class="password-display" id="passDisplay"></div>
+            
+            <div class="keypad">
+                <button onclick="press('1')">1</button>
+                <button onclick="press('2')">2</button>
+                <button onclick="press('3')">3</button>
+                <button onclick="press('4')">4</button>
+                <button onclick="press('5')">5</button>
+                <button onclick="press('6')">6</button>
+                <button onclick="press('7')">7</button>
+                <button onclick="press('8')">8</button>
+                <button onclick="press('9')">9</button>
+                <button class="action-btn" onclick="clearPass()">SİL</button>
+                <button onclick="press('0')">0</button>
+                <button class="action-btn" onclick="checkPass()">GİR</button>
+            </div>
+            <div id="errorMsg" class="error-msg">Yanlış tarih sevgilim, tekrar dene :)</div>
+        </div>
+    </div>
+
+    <!-- ANA İÇERİK -->
+    <div id="main-content">
+        <h1>Sonsuzluğum...</h1>
+        
+        <!-- Sayaç -->
+        <div id="counter">Hesaplanıyor...</div>
+
+        <!-- Zaman Çizelgesi -->
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-date">7 Aralık 2024</div>
+                <div class="timeline-text">Gözlerine ilk baktığım, dizlerimin bağının çözüldüğü gün.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Eylül 2022</div>
+                <div class="timeline-text">İlk buluşmamız, ilk heyecan, kalbimin yerinden çıkacak gibi atması.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Bugün</div>
+                <div class="timeline-text">Ve hala o ilk günkü gibi, hatta çok daha fazla aşığım sana.</div>
+            </div>
+        </div>
+
+        <!-- Vintage Polaroid Fotoğraflar -->
+        <div class="gallery">
+            <div class="polaroid">
+                <img src="foto1.jpg" alt="Biz 1" onerror="this.src='https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500&q=80'">
+                <div class="polaroid-caption">En güzel anımız</div>
+            </div>
+            <div class="polaroid">
+                <img src="foto2.jpg" alt="Biz 2" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=500&q=80'">
+                <div class="polaroid-caption">Gülüşün...</div>
+            </div>
+            <div class="polaroid">
+                <img src="foto3.jpg" alt="Biz 3" onerror="this.src='https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=500&q=80'">
+                <div class="polaroid-caption">İyi ki sen</div>
+            </div>
+        </div>
+
+        <!-- Gerçekçi Vintage Mektup -->
+        <div class="letter-container">
+            <div class="vintage-letter">
+                <div class="stamp">AŞK<br>ONAYLI</div>
+                <p><strong>Biriciğim, Birtane Sevgilim,</strong></p>
+                <p>Sana hissettiklerimi tam olarak anlatmaya kelimeler yetmez ama bu satırlara sığdırabildiğim kadarıyla bilmeni isterim ki; sen benim başıma gelen en güzel şeysin. Gözlerine her baktığımda zaman duruyor, ellerini her tuttuğumda dünyadaki tüm dertler silinip gidiyor.</p>
+                <p>Birlikte güldüğümüz, ağladığımız, hayaller kurduğumuz her an, hafızamın en değerli köşesinde altın harflerle kazılı. O kadar şanslı hissediyorum ki kendimi... Senin gibi birine sahip olmak, seninle aynı yolu yürümek... Kısacası İyi ki Sen....</p>
+                <p>Her gün senin yüzüne bakarak uyanıp, her gün senin gözlerine bakarak dalmak istiyorum uykuya. Daha birlikte gezeceğimiz çok yer, biriktireceğimiz çok anı, çekeceğimiz çok fotoğraf var.</p>
+                <p>İyi ki hayatıma girdin. İyi ki benimsin.</p>
+                <p style="text-align: right; margin-top: 30px; font-weight: bold; font-size: 26px;">Seni her şeyden çok seven,<br>Sevgilin.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // ŞİFRENİ BURAYA YAZ (Sadece Rakam Olarak, Örn: 15.08.2022 için 15082022)
+        const correctPassword = "18102024"; 
+        
+        // SAYAÇ TARİHİ (Yıl-Ay-Gün)
+        const startDate = new Date("2024-10-18T00:00:00").getTime();
+
+        let currentInput = "";
+        const display = document.getElementById("passDisplay");
+        const errorMsg = document.getElementById("errorMsg");
+
+        // Tuşlara basılınca
+        function press(num) {
+            if (currentInput.length < correctPassword.length) {
+                currentInput += num;
+                updateDisplay();
+                errorMsg.style.display = "none";
+                
+                // Şifre uzunluğuna ulaşınca otomatik kontrol et
+                if (currentInput.length === correctPassword.length) {
+                    setTimeout(checkPass, 200);
+                }
+            }
+        }
+
+        // Sil tuşu
+        function clearPass() {
+            currentInput = currentInput.slice(0, -1);
+            updateDisplay();
+            errorMsg.style.display = "none";
+        }
+
+        // Ekrandaki yıldızları/noktaları güncelle
+        function updateDisplay() {
+            // Şifreyi güvenlik için yuvarlak noktalar (•) olarak gösterir
+            display.innerText = "•".repeat(currentInput.length);
+        }
+
+        // Şifre Kontrolü
+        function checkPass() {
+            if (currentInput === correctPassword) {
+                // Şifre Doğru!
+                document.getElementById("login-screen").style.opacity = "0";
+                
+                // Müzik Çaları Başlat (Tarayıcılar tıklama sonrası müziğe izin verir)
+                const music = document.getElementById("bgMusic");
+                music.volume = 0.5; // Ses seviyesi %50
+                music.play().catch(e => console.log("Otomatik oynatma engellendi."));
+
+                setTimeout(() => {
+                    document.getElementById("login-screen").style.display = "none";
+                    document.getElementById("main-content").style.display = "block";
+                    startFallingHearts();
+                }, 1000);
+            } else {
+                // Şifre Yanlış
+                errorMsg.style.display = "block";
+                currentInput = "";
+                updateDisplay();
+            }
+        }
+
+        // Sayaç
+        setInterval(function() {
+            const now = new Date().getTime();
+            const distance = now - startDate;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("counter").innerHTML = 
+                "Birlikte Geçen: " + days + " Gün, " + hours + " Saat, " + minutes + " Dakika, " + seconds + " Saniye";
+        }, 1000);
+
+        // Uçuşan Kalpler
+        function startFallingHearts() {
+            setInterval(() => {
+                const heart = document.createElement("div");
+                heart.innerHTML = "❤";
+                heart.classList.add("heart");
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = Math.random() * 3 + 4 + "s";
+                heart.style.fontSize = Math.random() * 15 + 10 + "px";
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 7000);
+            }, 400);
+        }
+    </script>
+</body>
+</html>
